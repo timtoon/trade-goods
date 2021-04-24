@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Trade Goods DM Generator</title>
+	<meta name="description" content="For the Traveller role-playing game. Generate dice modifiers for available trade goods from an eight-character Universal World Profile.">
+	<meta name="author" content="Tim Heiderich, timtoon.com">
+	<meta name="license" content="CC BY-NC 4.0">
+	<meta name="version" content="1.0">
+	<script src="./tradeGoods.js"></script>
+<script>
+
+const F = Number.MAX_VALUE;	// 16?
+
+const codes = ['AG', 'AS', 'BA', 'DE', 'FL', 'GA', 'HI', 'HT', 'IE', 'IN', 'LO', 'LT', 'NA', 'NI', 'PO', 'RI', 'VA', 'WA'];
+
+const conditions = {
+	AG : [	null,		[4,9],		[4,8],		[5,7],		null,		null,		null,	],
+	AS : [	0,			0,			0,			null,		null,		null,		null,	],
+	BA : [	null,		null,		null,		0,			0,			0,			null,	],
+	DE : [	null,		[2,F],		0,			null,		null,		null,		null,	],
+	FL : [	null,		[10,F],		[1,F],		null,		null,		null,		null,	],
+	GA : [	[6,8],		[[[5,6],8]],[5,7],		null,		null,		null,		null,	],
+	HI : [	null,		null,		null,		[9,F],		null,		null,		null,	],
+	HT : [	null,		null,		null,		null,		null,		null,		[12,F],	],
+	IE : [	null,		[0,1],		[1,F],		null,		null,		null,		null,	],
+	IN : [	null,	[0,1,2,4,7,9],	null,		[9,F],		null,		null,		null,	],
+	LO : [	null,		null,		null,		[0,3],		null,		null,		null,	],
+	LT : [	null,		null,		null,		null,		null,		null,		[0,5],	],
+	NA : [	null,		[0,3],		[0,3],		[6,F],		null,		null,		null,	],
+	NI : [	null,		null,		null,		[0,6],		null,		null,		null,	],
+	PO : [	null,		[2,5],		[0,3],		null,		null,		null,		null,	],
+	RI : [	null,		[[6],[8]],	null,		[6,8],		[4,9],		null,		null,	],
+	VA : [	null,		0,			null,		null,		null,		null,		null,	],
+	WA : [	null,		null,		[10,F],		null,		null,		null,		null,	],
+};
+
+// THERE IS NO FUNCTION OVERLOADING IN JAVASCRIPT
+// Number.prototype.between = function(min) {
+// 	console.log(typeof min, this);
+// 	return this == min;
+// };
+
+Number.prototype.between = function(min, max = 0) {
+	if(max === 0) {
+		return this == min;
+	}
+	return (this >= min) && (this <= max);
+};
+
+Number.prototype.verify = function(v) {
+
+	var self 	= this;
+	var isValid = false;
+
+	if(v === null) {
+		return true;
+	}
+
+	if(typeof v === 'number') {
+		return self.between(v);
+	}
+
+	// [0,6]
+	// [[[5,6],8]]
+	// 
+	v.forEach(function(value, key) {
+		if(typeof value === 'array') {
+			isValid = self.between(value[0], value[1]);
+		} else {
+			isValid = self.between(value);
+		}
+		if(!isValid) {
+			return false;
+		}
+	});
+	
+	return true;
+}
+
+/*
+0 = Starport
+1 = Size
+2 = Atmosphere
+3 = Hydro
+4 = Population
+5 = Govt
+6 = Law
+7 = Tech
+*/
+function generate() {
+	var uwp = document.getElementById('uwp').value.split('');
+
+	if(uwp.length !== 8) {
+		alert('UWP must be exactly eight characters!');
+		return false;
+	}
+
+	// Convert from hex to integers
+	uwp.forEach(function(value, key) {
+		uwp[key] = parseInt(value.toUpperCase(),16);
+	});
+
+	var uwpGovernment = uwp[5];
+	var uwpLaw 		  = uwp[6];
+
+	var tradeCodes = setTradeCodes(uwp);
+
+	// Add Amber/Red Zone modifier
+	if(document.getElementById('zone').value) {
+		tradeCodes.push(document.getElementById('zone').value);
+	}
+
+	document.getElementById('tradeCodes').innerHTML = 'Trade Codes: ' + tradeCodes;
+
+	var dms = {};
+
+	tradeGoods.forEach(function(goods) {
+
+		dms[goods.dd] = {
+			'available' : null,
+			'illegal'	: null,
+			'buyDm'		: [],
+			'sellDm'	: [],
+		};
+
+		// available is true if the value for goods is 'All' or it is one of the UWP trade codes
+		dms[goods.dd]['available'] = goods.availability.find( code => Array('All', ...tradeCodes).includes(code)) !== undefined;
+
+		let buyDms  = [];
+		let sellDms = [];
+
+		// Insert all DMs that match the trade code
+		tradeCodes.forEach(function(tradeCode) {
+			if(Object.keys(goods.buyDm).includes(tradeCode)) {
+				buyDms.push(goods.buyDm[tradeCode]);
+			}
+			if(Object.keys(goods.sellDm).includes(tradeCode)) {
+				sellDms.push(goods.sellDm[tradeCode]);
+			}
+		});
+
+		// Take the highest DM
+		dms[goods.dd]['buyDm']  = Math.max(...buyDms);
+		dms[goods.dd]['buyDm']  = dms[goods.dd]['buyDm'] == Number.NEGATIVE_INFINITY ? 0 : dms[goods.dd]['buyDm'];
+
+		dms[goods.dd]['sellDm'] = Math.max(...sellDms);
+		dms[goods.dd]['sellDm']  = dms[goods.dd]['sellDm'] == Number.NEGATIVE_INFINITY ? 0 : dms[goods.dd]['sellDm'];
+
+		// Determine if the goods are illegal
+		dms[goods.dd]['illegal'] = (uwpLaw >= goods.law) && (goods.government.includes(uwpGovernment));
+	}, tradeCodes);
+
+generateTable(dms);
+
+// 	tradeCodes = generateTradeCodes(uwp);	// Can probably combine
+//	generateTradeGoods(tradeCodes);			// these two lines.
+// 	generateTable();
+
+	return false;
+}
+
+function generateTradeCodes(uwp) {
+
+	let tradeCodes = [];
+
+	conditions.forEach(function(requirements, tradeCode) {
+		console.log(tradeCode, requirements);
+		requirements.forEach(function(requirement, index) {
+			// if( !verify(uwp[index], requirement) ) {
+			// 	continue;
+			// }
+		});
+		tradeCodes.push(tradeCode);
+	});
+}
+
+function setTradeCodes(uwp) {
+
+	let tradeCodes = [];
+
+	// AG : [	null,		[4,9],		[4,8],		[5,7],		null,		null,		null,	],
+	if( uwp[2].between(4,9) && uwp[3].between(4,8) && uwp[4].between(5,7) ) {
+		tradeCodes.push('AG');
+	}
+
+	// AS : [	0,			0,			0,			null,		null,		null,		null,	],
+	if( uwp[1].between(0) && uwp[2].between(0) && uwp[3].between(0) ) {
+		tradeCodes.push('AS');
+	}
+
+	// BA : [	null,		null,		null,		0,			0,			0,			null,	],
+	if( uwp[4].between(0) && uwp[5].between(0) && uwp[6].between(0) ) {
+		tradeCodes.push('BA');
+	}
+
+	// DE : [	null,		[2,F],		0,			null,		null,		null,		null,	],
+	if( uwp[1].between(2,F) && uwp[2].between(0) ) {
+		tradeCodes.push('DE');
+	}
+
+	// FL : [	null,		[10,F],		[1,F],		null,		null,		null,		null,	],
+	if( uwp[2].between(10,F) && uwp[3].between(1,F) ) {
+		tradeCodes.push('FL');
+	}
+
+	// GA : [	[6,8],		[[[5,6],8]],[5,7],		null,		null,		null,		null,	],
+	if( uwp[1].between(6,8) && ( uwp[2].between(5,6) || uwp[2].between(8) ) && uwp[3].between(5,7) ) {
+		tradeCodes.push('GA');
+	}
+
+	// HI : [	null,		null,		null,		[9,F],		null,		null,		null,	],
+	if( uwp[4].between(9,F) ) {
+		tradeCodes.push('HI');
+	}
+
+	// HT : [	null,		null,		null,		null,		null,		null,		[12,F],	],
+	if( uwp[7].between(12,F) ) {
+		tradeCodes.push('HT');
+	}
+
+	// IE : [	null,		[0,1],		[1,F],		null,		null,		null,		null,	],
+	if( uwp[1].between(0,1) && uwp[2].between(1,F) ) {
+		tradeCodes.push('IE');
+	}
+
+	// IN : [	null,	[0,1,2,4,7,9],	null,		[9,F],		null,		null,		null,	],
+	if( ( uwp[2].between(0,2) || uwp[2].between(4) || uwp[2].between(7) || uwp[2].between(9) ) && uwp[4].between(9,F) ) {
+		tradeCodes.push('IN');
+	}
+
+	// LO : [	null,		null,		null,		[0,3],		null,		null,		null,	],
+	if( uwp[4].between(0,3) ) {
+		tradeCodes.push('LO');
+	}
+
+	// LT : [	null,		null,		null,		null,		null,		null,		[0,5],	],
+	if( uwp[7].between(0,5) ) {
+		tradeCodes.push('LT');
+	}
+
+	// NA : [	null,		[0,3],		[0,3],		[6,F],		null,		null,		null,	],
+	if( uwp[2].between(0,3) && uwp[3].between(0,3) && uwp[4].between(6,F) ) {
+		tradeCodes.push('NA');
+	}
+
+	// NI : [	null,		null,		null,		[0,6],		null,		null,		null,	],
+	if( uwp[4].between(0,6) ) {
+		tradeCodes.push('NI');
+	}
+
+	// PO : [	null,		[2,5],		[0,3],		null,		null,		null,		null,	],
+	if( uwp[2].between(2,5) && uwp[3].between(0,3) ) {
+		tradeCodes.push('PO');
+	}
+
+	// RI : [	null,		[[6],[8]],	null,		[6,8],		[4,9],		null,		null,	],
+	if( ( uwp[2].between(6) || uwp[2].between(8) ) && uwp[4].between(6,8)) {
+		tradeCodes.push('RI');
+	}
+
+	// VA : [	null,		0,			null,		null,		null,		null,		null,	],
+	if( uwp[2].between(0) ) {
+		tradeCodes.push('VA');
+	}
+
+	// WA : [	null,		null,		[10,F],		null,		null,		null,		null,	],
+	if( uwp[3].between(10,F) ) {
+		tradeCodes.push('WA');
+	}
+
+	return tradeCodes;
+}
+
+function generateTable(dms) {
+
+	var table = document.getElementById("tradeTable");
+
+	while ( table.rows.length > 1 ) {
+		table.deleteRow(table.rows.length - 1);
+	}
+
+	tradeGoods.forEach(function(goods) {
+		var row = table.insertRow();
+
+		Object.entries(goods).forEach(value => {
+			switch(value[0]) {
+				case 'dd':
+				case 'type':
+				case 'tons':
+				case 'price':
+					row.insertCell().innerHTML = value[1];
+					break;
+				case 'availability':
+					if(!dms[goods['dd']]['available']) {
+						row.classList.add('unavailable');
+					}
+					row.insertCell().innerHTML = dms[goods['dd']]['available'] ? 'YES' : '';
+					break;
+				case 'buyDm':
+					row.insertCell().innerHTML = dms[goods['dd']]['buyDm'];
+					break;
+				case 'sellDm':
+					row.insertCell().innerHTML = dms[goods['dd']]['sellDm'];
+					break;
+				case 'law':
+					if(dms[goods['dd']]['illegal']) {
+						row.classList.add('illegal');
+					}
+					row.insertCell().innerHTML = dms[goods['dd']]['illegal'] ? '*** ILLEGAL ***' : '';
+					break;
+				case 'government':
+				case 'example':
+				default:
+					break;
+			}
+		});
+	});
+}
+
+</script>
+<style>
+
+* {
+	font-family: Helvetica, Arial, sans-serif;
+}
+
+body {
+	text-align: center;
+	color: white;
+	background-color: black;
+	padding: 0 1em 6em;
+}
+
+a {
+	color: red;
+}
+
+table, th, td {
+	margin: 1em auto;
+	padding: .5em;
+	border: 1px solid white;
+	table-layout: inherit;
+	border-collapse: collapse;
+	font-size: small;
+}
+
+form {
+	text-align: center;
+}
+
+form input {
+	font-size: large;
+	padding-left: .5em;
+}
+
+.unavailable {
+	color: gray;
+	text-decoration: line-through;
+}
+
+.illegal {
+	color: red;
+	text-decoration: none;
+	border: 1px solid red;
+}
+
+footer {
+	font-size: small;
+	margin: 0;
+	width: 100%;
+	/* position:fixed;
+	bottom: 0; */
+	padding-bottom: 1em;
+	background-color: black;
+}
+</style>
+</head>
+<body>
+<h1>Trade Goods Dice Modifiers</h1>
+<p>Enter the eight-character Universal World Profile to generate its dice modifier for available trade goods.</p>
+
+<form action="get" onsubmit="generate(); return false;">
+	<label>UWP code:</label>
+		<input name="uwp" id="uwp" maxlength="8" size="9" placeholder="########" value="">
+	<label>Zone:</label>
+		<select name="zone" id="zone">
+		<option value="">Green</option>
+		<option value="AmberZone">Amber</option>
+		<option value="RedZone">Red</option>
+	</select>
+	<button name="submit">Generate DMs</button>
+</form>
+
+<p id="tradeCodes"></p>
+
+<table id="tradeTable">
+	<tr>
+		<th>D66</th>
+		<th>Type</th>
+		<th>Availability</th>
+		<th>Tons</th>
+		<th>Base Price</th>
+		<th>Purchase DM</th>
+		<th>Sale DM</th>
+		<th>Illegal</th>
+		<!-- <th>Government</th> -->
+		<!-- <th>Examples</th> -->
+	</tr>
+</table>
+
+<footer>
+	<p>For Mongoose Traveller, 2nd Edition</p>
+	<p xmlns:cc="http://creativecommons.org/ns#" xmlns:dct="http://purl.org/dc/terms/"><a property="dct:title" rel="cc:attributionURL" href="https://github.com/timtoon/trade_goods_dms">Trade Goods Dice Modifiers</a> by <a rel="cc:attributionURL dct:creator" property="cc:attributionName" href="http://timtoon.com">Tim Heiderich</a> is licensed under <a href="http://creativecommons.org/licenses/by-nc/4.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer" style="display:inline-block;">CC BY-NC 4.0<img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1"><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg?ref=chooser-v1"><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg?ref=chooser-v1"></a></p>
+	<p><a href="http://www.farfuture.net/FFEFairUsePolicy2008.pdf" target="_blank">The Traveller game in all forms is owned by Far Future Enterprises. Copyright 1977-2008 Far Future Enterprises.</a></p>
+</footer>
+</body>
+<script>
+
+</script>
+</html>

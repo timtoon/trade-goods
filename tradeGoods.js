@@ -23,7 +23,6 @@ const tradeGoods = [
 	sellDm : {NI: 2, LT: 1, PO: 1},
 	law: 9,
 	government: [3,5,6,9,11],
-	example : 'Simple electronics including basic computers up to TL10'
 },{
 	dd : 12,
 	type : 'Common Industrial Goods',
@@ -34,7 +33,6 @@ const tradeGoods = [
 	sellDm : {NI: 3, AG: 2},
 	law: 9,
 	government: [3,5,6,9,11],
-	example : 'Machine components and spare parts for common machinery'
 },{
 	dd : 13,
 	type : 'Common Manufactured Goods',
@@ -45,7 +43,6 @@ const tradeGoods = [
 	sellDm : {NI: 3, HI: 2},
 	law: 0,
 	government: [],
-	example : 'Household appliances, clothing and so forth'
 },{
 	dd : 14,
 	type : 'Common Raw Materials',
@@ -56,7 +53,6 @@ const tradeGoods = [
 	sellDm : {IN: 2, PO: 2},
 	law: 0,
 	government: [],
-	example : 'Metal, plastics, chemicals and other basic materials'
 },{
 	dd : 15,
 	type : 'Common Consumables',
@@ -67,7 +63,6 @@ const tradeGoods = [
 	sellDm : {AS: 1, Fl: 1, IE: 1, HI: 1},
 	law: 0,
 	government: [],
-	example : 'Food, drink and other agricultural products'
 },{
 	dd : 16,
 	type : 'Common Ore',
@@ -78,7 +73,6 @@ const tradeGoods = [
 	sellDm : {IN: 3, NI: 1},
 	law: 0,
 	government: [],
-	example : 'Ore bearing common metals'
 },{
 	dd : 21,
 	type : 'Advanced Electronics',
@@ -89,7 +83,6 @@ const tradeGoods = [
 	sellDm : {NI: 1, RI: 2, AS: 3},
 	law: 6,
 	government: [5,11],
-	example : 'Advanced sensors, computers and other electronics up to TL15'
 },{
 	dd : 22,
 	type : 'Advanced Machine Parts',
@@ -100,7 +93,6 @@ const tradeGoods = [
 	sellDm : {AS: 2, NI: 1},
 	law: 8,
 	government: [3,5,6,9,11],
-	example : 'Machine components and spare parts, including gravitic components'
 },{
 	dd : 23,
 	type : 'Advanced Manufactured Goods',
@@ -111,7 +103,6 @@ const tradeGoods = [
 	sellDm : {HI: 1, RI: 2},
 	law: 8,
 	government: [3,5,6,9,11],
-	example : 'Devices and clothing incorporating advanced technologies'
 },{
 	dd : 24,
 	type : 'Advanced Weapons',
@@ -122,7 +113,6 @@ const tradeGoods = [
 	sellDm : {PO: 1, AmberZone: 2, RedZone: 4},
 	law: 3,
 	government: [1,3,4,5,6,8,9,11,12],
-	example : 'Firearms, explosives, ammunition, artillery and other military-grade weaponry'
 },{
 	dd : 25,
 	type : 'Advanced Vehicles',
@@ -133,7 +123,6 @@ const tradeGoods = [
 	sellDm : {AS: 2, RI: 2},
 	law: 8,
 	government: [3,5,6,9,11],
-	example : 'Grav cars, tanks, spacecraft and other vehicles up to TL15'
 },{
 	dd : 26,
 	type : 'Biochemicals',
@@ -144,7 +133,6 @@ const tradeGoods = [
 	sellDm : {IN: 2},
 	law: 0,
 	government: [],
-	example : 'Biofuels, organic chemicals, extracts'
 },{
 	dd : 31,
 	type : 'Crystals & Gems',
@@ -155,7 +143,6 @@ const tradeGoods = [
 	sellDm : {IN: 3, RI: 2},
 	law: 0,
 	government: [],
-	example : 'Diamonds, synthetic or natural gemstones'
 },{
 	dd : 32,
 	type : 'Cybernetics',
@@ -166,7 +153,6 @@ const tradeGoods = [
 	sellDm : {AS: 1, IE: 1, RI: 2},
 	law: 0,
 	government: [3,5,6,9,11],
-	example : 'Cybernetic components, replacement limbs'
 },{
 	dd : 33,
 	type : 'Live Animals',
@@ -177,7 +163,6 @@ const tradeGoods = [
 	sellDm : {LO: 3},
 	law: 0,
 	government: [],
-	example : 'Riding animals, beasts of burden, exotic pets'
 },{
 	dd : 34,
 	type : 'Luxury Consumables',
@@ -188,7 +173,6 @@ const tradeGoods = [
 	sellDm : {RI: 2, HI: 2},
 	law: 0,
 	government: [],
-	example : 'Rare foods, fine liquors'
 },{
 	dd : 35,
 	type : 'Luxury Goods',
@@ -199,7 +183,6 @@ const tradeGoods = [
 	sellDm : {RI: 4},
 	law: 0,
 	government: [],
-	example : 'Rare or extremely high-quality manufactured goods'
 },{
 	dd : 36,
 	type : 'Medical Supplies',
@@ -210,7 +193,6 @@ const tradeGoods = [
 	sellDm : {IN: 2, PO: 1, RI: 1},
 	law: 9,
 	government: [2,4,8,9],
-	example : 'Diagnostic equipment, basic drugs, cloning technology'
 },{
 	dd : 41,
 	type : 'Petrochemicals',
@@ -221,7 +203,6 @@ const tradeGoods = [
 	sellDm : {IN: 2, AG: 1, LT: 2},
 	law: 0,
 	government: [],
-	example : 'Oil, liquid fuels'
 },{
 	dd : 42,
 	type : 'Pharmaceuticals',
@@ -232,7 +213,6 @@ const tradeGoods = [
 	sellDm : {RI: 2, LT: 1},
 	law: 0,
 	government: [],
-	example : 'Drugs, medical supplies, anagathatics, fast or slow drugs'
 },{
 	dd : 43,
 	type : 'Polymers',
@@ -243,7 +223,6 @@ const tradeGoods = [
 	sellDm : {RI: 2, NI: 1},
 	law: 0,
 	government: [],
-	example : 'Plastics and other synthetics'
 },{
 	dd : 44,
 	type : 'Precious Metals',
@@ -254,7 +233,6 @@ const tradeGoods = [
 	sellDm : {RI: 3, IN: 2, HT: 1},
 	law: 0,
 	government: [],
-	example : 'Gold, silver, platinum, rare elements'
 },{
 	dd : 45,
 	type : 'Radioactives',
@@ -265,7 +243,6 @@ const tradeGoods = [
 	sellDm : {IN: 3, HT: 1, NI: -2, AG: -3},
 	law: 0,
 	government: [],
-	example : 'Uranium, plutonium, unobtanium, rare elements'
 },{
 	dd : 46,
 	type : 'Robots',
@@ -276,7 +253,6 @@ const tradeGoods = [
 	sellDm : {AG: 2, HT: 1},
 	law: 8,
 	government: [3,5,6,9,11],
-	example : 'Industrial and personal robots and drones'
 },{
 	dd : 51,
 	type : 'Spices',
@@ -287,7 +263,6 @@ const tradeGoods = [
 	sellDm : {HI: 2, RI: 3, PO: 3},
 	law: 0,
 	government: [],
-	example : 'Preservatives, luxury food additives, natural drugs'
 },{
 	dd : 52,
 	type : 'Textiles',
@@ -298,7 +273,6 @@ const tradeGoods = [
 	sellDm : {HI: 3, NA: 2},
 	law: 0,
 	government: [],
-	example : 'Clothing and fabrics'
 },{
 	dd : 53,
 	type : 'Uncommon Ore',
@@ -309,7 +283,6 @@ const tradeGoods = [
 	sellDm : {IN: 3, NI: 1},
 	law: 0,
 	government: [],
-	example : 'Ore containing precious or valuable metals'
 },{
 	dd : 54,
 	type : 'Uncommon Raw Materials',
@@ -320,7 +293,6 @@ const tradeGoods = [
 	sellDm : {IN: 2, HT: 1},
 	law: 0,
 	government: [],
-	example : 'Valuable metals like titanium, rare elements'
 },{
 	dd : 55,
 	type : 'Wood',
@@ -331,7 +303,6 @@ const tradeGoods = [
 	sellDm : {RI: 2, IN: 1},
 	law: 0,
 	government: [],
-	example : 'Hard or beautiful woods and plant extracts'
 },{
 	dd : 56,
 	type : 'Vehicles',
@@ -342,7 +313,6 @@ const tradeGoods = [
 	sellDm : {NI: 2, HI: 1},
 	law: 0,
 	government: [],
-	example : 'Wheeled, tracked and other vehicles from TL10 or lower'
 },{
 	dd : 61,
 	type : 'Illegal Biochemicals',
@@ -353,7 +323,6 @@ const tradeGoods = [
 	sellDm : {IN: 6},
 	law: 3,
 	government: [],
-	example : 'Dangerous chemicals, extracts from endangered species'
 },{
 	dd : 62,
 	type : 'Cybernetics, Illegal',
@@ -364,7 +333,6 @@ const tradeGoods = [
 	sellDm : {AS: 4, IE: 4, RI: 8, AmberZone: 6, RedZone: 6},
 	law: 3,
 	government: [],
-	example : 'Combat cybernetics, illegal enhancements'
 },{
 	dd : 63,
 	type : 'Drugs, Illegal',
@@ -375,7 +343,6 @@ const tradeGoods = [
 	sellDm : {RI: 6, HI: 6},
 	law: 6,
 	government: [1,2,3,4,5,6,8,9,11],
-	example : 'Addictive drugs, combat drugs'
 },{
 	dd : 64,
 	type : 'Luxuries, Illegal',
@@ -386,7 +353,6 @@ const tradeGoods = [
 	sellDm : {RI: 6, HI: 4},
 	law: 6,
 	government: [],
-	example : 'Debauched or addictive luxuries'
 },{
 	
 	dd : 65,
@@ -398,7 +364,6 @@ const tradeGoods = [
 	sellDm : {PO: 6, AmberZone: 8, RedZone: 10},
 	law: 1,
 	government: [],
-	example : 'Weapons of mass destruction, naval weapons'
 },{
 	
 	dd : 66,
@@ -410,6 +375,5 @@ const tradeGoods = [
 	sellDm : {},
 	law: 0,
 	government: [],
-	example : 'Exotic goods are outside the normal trade rules, and covers such things are alien relics, prototype technology, unique plant or animal life, priceless treasures and so forth. Buying and selling exotic goods is a matter for roleplaying and adventure'
 }
 ];

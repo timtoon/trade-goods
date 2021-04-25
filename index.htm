@@ -100,15 +100,21 @@ function generate() {
             }
         });
 
-        // Take the highest DM
-        dms[goods.dd]['buyDm']  = Math.max(...buyDms);
-        dms[goods.dd]['buyDm']  = dms[goods.dd]['buyDm'] == Number.NEGATIVE_INFINITY ? 0 : dms[goods.dd]['buyDm'];
-
-        dms[goods.dd]['sellDm'] = Math.max(...sellDms);
-        dms[goods.dd]['sellDm'] = dms[goods.dd]['sellDm'] == Number.NEGATIVE_INFINITY ? 0 : dms[goods.dd]['sellDm'];
+        // Take the highest buy/sell DMs and subtract the difference
+        var buyDm                = Math.max(...buyDms);
+        buyDm                    = buyDm == Number.NEGATIVE_INFINITY ? 0 : buyDm;
 
         // Determine if the goods are illegal
-        dms[goods.dd]['illegal'] = (uwpLaw >= goods.law) && (goods.government.includes(uwpGovernment));
+        dms[goods.dd]['illegal'] = goods.government.includes(uwpGovernment);
+        buyDm                    = dms[goods.dd]['illegal'] ? Math.max((uwpLaw - goods.law), buyDm) : buyDm;
+
+        dms[goods.dd]['sellDm']  = Math.max(...sellDms);
+        dms[goods.dd]['sellDm']  = dms[goods.dd]['sellDm'] == Number.NEGATIVE_INFINITY ? 0 : dms[goods.dd]['sellDm'];
+
+        dms[goods.dd]['buyDm']   = buyDm - dms[goods.dd]['sellDm'];
+
+        dms[goods.dd]['sellDm'] -= buyDm;
+
     }, tradeCodes);
 
     generateTable(dms);

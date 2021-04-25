@@ -1,41 +1,41 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Trade Goods DM Generator</title>
-	<meta name="description" content="For the Traveller role-playing game. Generate dice modifiers for available trade goods from an eight-character Universal World Profile.">
-	<meta name="author" content="Tim Heiderich, timtoon.com">
-	<meta name="license" content="CC BY-NC 4.0">
-	<meta name="version" content="1.0">
+    <title>Trade Goods DM Generator</title>
+    <meta name="description" content="For the Traveller role-playing game. Generate dice modifiers for available trade goods from an eight-character Universal World Profile.">
+    <meta name="author" content="Tim Heiderich, timtoon.com">
+    <meta name="license" content="CC BY-NC 4.0">
+    <meta name="version" content="1.0">
 <script>
 
-const F = Number.MAX_VALUE;	// 16?
+const F = Number.MAX_VALUE;    // 16?
 
 const conditions = {
-	AG : [	null,		[4,9],		[4,8],		[5,7],		null,		null,		null,	],
-	AS : [	0,			0,			0,			null,		null,		null,		null,	],
-	BA : [	null,		null,		null,		0,			0,			0,			null,	],
-	DE : [	null,		[2,F],		0,			null,		null,		null,		null,	],
-	FL : [	null,		[10,F],		[1,F],		null,		null,		null,		null,	],
-	GA : [	[6,8],		[[[5,6],8]],[5,7],		null,		null,		null,		null,	],
-	HI : [	null,		null,		null,		[9,F],		null,		null,		null,	],
-	HT : [	null,		null,		null,		null,		null,		null,		[12,F],	],
-	IE : [	null,		[0,1],		[1,F],		null,		null,		null,		null,	],
-	IN : [	null,	[0,1,2,4,7,9],	null,		[9,F],		null,		null,		null,	],
-	LO : [	null,		null,		null,		[0,3],		null,		null,		null,	],
-	LT : [	null,		null,		null,		null,		null,		null,		[0,5],	],
-	NA : [	null,		[0,3],		[0,3],		[6,F],		null,		null,		null,	],
-	NI : [	null,		null,		null,		[0,6],		null,		null,		null,	],
-	PO : [	null,		[2,5],		[0,3],		null,		null,		null,		null,	],
-	RI : [	null,		[[6],[8]],	null,		[6,8],		[4,9],		null,		null,	],
-	VA : [	null,		0,			null,		null,		null,		null,		null,	],
-	WA : [	null,		null,		[10,F],		null,		null,		null,		null,	],
+    AG : [    null,     [4,9],      [4,8],      [5,7],      null,       null,       null,   ],
+    AS : [    0,        0,          0,          null,       null,       null,       null,   ],
+    BA : [    null,     null,       null,       0,          0,          0,          null,   ],
+    DE : [    null,     [2,F],      0,          null,       null,       null,       null,   ],
+    FL : [    null,     [10,F],     [1,F],      null,       null,       null,       null,   ],
+    GA : [    [6,8],   [[[5,6],8]], [5,7],      null,       null,       null,       null,   ],
+    HI : [    null,     null,       null,       [9,F],      null,       null,       null,   ],
+    HT : [    null,     null,       null,       null,       null,       null,       [12,F], ],
+    IE : [    null,     [0,1],      [1,F],      null,       null,       null,       null,   ],
+    IN : [    null,  [0,1,2,4,7,9], null,       [9,F],      null,       null,       null,   ],
+    LO : [    null,     null,       null,       [0,3],      null,       null,       null,   ],
+    LT : [    null,     null,       null,       null,       null,       null,       [0,5],  ],
+    NA : [    null,     [0,3],      [0,3],      [6,F],      null,       null,       null,   ],
+    NI : [    null,     null,       null,       [0,6],      null,       null,       null,   ],
+    PO : [    null,     [2,5],      [0,3],      null,       null,       null,       null,   ],
+    RI : [    null,     [[6],[8]],  null,       [6,8],      [4,9],      null,       null,   ],
+    VA : [    null,     0,          null,       null,       null,       null,       null,   ],
+    WA : [    null,     null,       [10,F],     null,       null,       null,       null,   ],
 };
 
 Number.prototype.between = function(min, max = 0) {
-	if(max === 0) {
-		return this == min;
-	}
-	return (this >= min) && (this <= max);
+    if(max === 0) {
+        return this == min;
+    }
+    return (this >= min) && (this <= max);
 };
 
 /*
@@ -49,270 +49,270 @@ Number.prototype.between = function(min, max = 0) {
 7 = Tech
 */
 function generate() {
-	var uwp = document.getElementById('uwp').value.split('');
+    var uwp = document.getElementById('uwp').value.split('');
 
-	if(uwp.length !== 8) {
-		alert('UWP must be exactly eight characters!');
-		return false;
-	}
+    if(uwp.length !== 8) {
+        alert('UWP must be exactly eight characters!');
+        return false;
+    }
 
-	// Convert from hex to integers
-	uwp.forEach(function(value, key) {
-		uwp[key] = parseInt(value.toUpperCase(),16);
-	});
+    // Convert from hex to integers
+    uwp.forEach(function(value, key) {
+        uwp[key] = parseInt(value.toUpperCase(),16);
+    });
 
-	var uwpGovernment = uwp[5];
-	var uwpLaw 		  = uwp[6];
+    var uwpGovernment = uwp[5];
+    var uwpLaw        = uwp[6];
 
-	var tradeCodes = setTradeCodes(uwp);
+    var tradeCodes = setTradeCodes(uwp);
 
-	// Add Amber/Red Zone modifier
-	if(document.getElementById('zone').value) {
-		tradeCodes.push(document.getElementById('zone').value);
-	}
+    // Add Amber/Red Zone modifier
+    if(document.getElementById('zone').value) {
+        tradeCodes.push(document.getElementById('zone').value);
+    }
 
-	document.getElementById('tradeCodes').innerHTML = 'Trade Codes: ' + tradeCodes;
+    document.getElementById('tradeCodes').innerHTML = 'Trade Codes: ' + tradeCodes;
 
-	var dms = {};
+    var dms = {};
 
-	tradeGoods.forEach(function(goods) {
+    tradeGoods.forEach(function(goods) {
 
-		dms[goods.dd] = {
-			'available' : null,
-			'illegal'	: null,
-			'buyDm'		: [],
-			'sellDm'	: [],
-		};
+        dms[goods.dd] = {
+            'available' : null,
+            'illegal'   : null,
+            'buyDm'     : [],
+            'sellDm'    : [],
+        };
 
-		// available is true if the value for goods is 'All' or it is one of the UWP trade codes
-		dms[goods.dd]['available'] = goods.availability.find( code => Array('All', ...tradeCodes).includes(code)) !== undefined;
+        // available is true if the value for goods is 'All' or it is one of the UWP trade codes
+        dms[goods.dd]['available'] = goods.availability.find( code => Array('All', ...tradeCodes).includes(code)) !== undefined;
 
-		let buyDms  = [];
-		let sellDms = [];
+        let buyDms  = [];
+        let sellDms = [];
 
-		// Insert all DMs that match the trade code
-		tradeCodes.forEach(function(tradeCode) {
-			if(Object.keys(goods.buyDm).includes(tradeCode)) {
-				buyDms.push(goods.buyDm[tradeCode]);
-			}
-			if(Object.keys(goods.sellDm).includes(tradeCode)) {
-				sellDms.push(goods.sellDm[tradeCode]);
-			}
-		});
+        // Insert all DMs that match the trade code
+        tradeCodes.forEach(function(tradeCode) {
+            if(Object.keys(goods.buyDm).includes(tradeCode)) {
+                buyDms.push(goods.buyDm[tradeCode]);
+            }
+            if(Object.keys(goods.sellDm).includes(tradeCode)) {
+                sellDms.push(goods.sellDm[tradeCode]);
+            }
+        });
 
-		// Take the highest DM
-		dms[goods.dd]['buyDm']  = Math.max(...buyDms);
-		dms[goods.dd]['buyDm']  = dms[goods.dd]['buyDm'] == Number.NEGATIVE_INFINITY ? 0 : dms[goods.dd]['buyDm'];
+        // Take the highest DM
+        dms[goods.dd]['buyDm']  = Math.max(...buyDms);
+        dms[goods.dd]['buyDm']  = dms[goods.dd]['buyDm'] == Number.NEGATIVE_INFINITY ? 0 : dms[goods.dd]['buyDm'];
 
-		dms[goods.dd]['sellDm'] = Math.max(...sellDms);
-		dms[goods.dd]['sellDm']  = dms[goods.dd]['sellDm'] == Number.NEGATIVE_INFINITY ? 0 : dms[goods.dd]['sellDm'];
+        dms[goods.dd]['sellDm'] = Math.max(...sellDms);
+        dms[goods.dd]['sellDm'] = dms[goods.dd]['sellDm'] == Number.NEGATIVE_INFINITY ? 0 : dms[goods.dd]['sellDm'];
 
-		// Determine if the goods are illegal
-		dms[goods.dd]['illegal'] = (uwpLaw >= goods.law) && (goods.government.includes(uwpGovernment));
-	}, tradeCodes);
+        // Determine if the goods are illegal
+        dms[goods.dd]['illegal'] = (uwpLaw >= goods.law) && (goods.government.includes(uwpGovernment));
+    }, tradeCodes);
 
-	generateTable(dms);
+    generateTable(dms);
 
-	return false;
+    return false;
 }
 
 function setTradeCodes(uwp) {
 
-	let tradeCodes = [];
+    let tradeCodes = [];
 
-	// AG : [	null,		[4,9],		[4,8],		[5,7],		null,		null,		null,	],
-	if( uwp[2].between(4,9) && uwp[3].between(4,8) && uwp[4].between(5,7) ) {
-		tradeCodes.push('AG');
-	}
+    // AG : [    null,     [4,9],      [4,8],      [5,7],      null,       null,       null,   ],
+    if( uwp[2].between(4,9) && uwp[3].between(4,8) && uwp[4].between(5,7) ) {
+        tradeCodes.push('AG');
+    }
 
-	// AS : [	0,			0,			0,			null,		null,		null,		null,	],
-	if( uwp[1].between(0) && uwp[2].between(0) && uwp[3].between(0) ) {
-		tradeCodes.push('AS');
-	}
+    // AS : [    0,        0,          0,          null,       null,       null,       null,   ],
+    if( uwp[1].between(0) && uwp[2].between(0) && uwp[3].between(0) ) {
+        tradeCodes.push('AS');
+    }
 
-	// BA : [	null,		null,		null,		0,			0,			0,			null,	],
-	if( uwp[4].between(0) && uwp[5].between(0) && uwp[6].between(0) ) {
-		tradeCodes.push('BA');
-	}
+    // BA : [    null,     null,       null,       0,          0,          0,          null,   ],
+    if( uwp[4].between(0) && uwp[5].between(0) && uwp[6].between(0) ) {
+        tradeCodes.push('BA');
+    }
 
-	// DE : [	null,		[2,F],		0,			null,		null,		null,		null,	],
-	if( uwp[1].between(2,F) && uwp[2].between(0) ) {
-		tradeCodes.push('DE');
-	}
+    // DE : [    null,     [2,F],      0,          null,       null,       null,       null,   ],
+    if( uwp[1].between(2,F) && uwp[2].between(0) ) {
+        tradeCodes.push('DE');
+    }
 
-	// FL : [	null,		[10,F],		[1,F],		null,		null,		null,		null,	],
-	if( uwp[2].between(10,F) && uwp[3].between(1,F) ) {
-		tradeCodes.push('FL');
-	}
+    // FL : [    null,     [10,F],     [1,F],      null,       null,       null,       null,   ],
+    if( uwp[2].between(10,F) && uwp[3].between(1,F) ) {
+        tradeCodes.push('FL');
+    }
 
-	// GA : [	[6,8],		[[[5,6],8]],[5,7],		null,		null,		null,		null,	],
-	if( uwp[1].between(6,8) && ( uwp[2].between(5,6) || uwp[2].between(8) ) && uwp[3].between(5,7) ) {
-		tradeCodes.push('GA');
-	}
+    // GA : [    [6,8],   [[[5,6],8]], [5,7],      null,       null,       null,       null,   ],
+    if( uwp[1].between(6,8) && ( uwp[2].between(5,6) || uwp[2].between(8) ) && uwp[3].between(5,7) ) {
+        tradeCodes.push('GA');
+    }
 
-	// HI : [	null,		null,		null,		[9,F],		null,		null,		null,	],
-	if( uwp[4].between(9,F) ) {
-		tradeCodes.push('HI');
-	}
+    // HI : [    null,     null,       null,       [9,F],      null,       null,       null,   ],
+    if( uwp[4].between(9,F) ) {
+        tradeCodes.push('HI');
+    }
 
-	// HT : [	null,		null,		null,		null,		null,		null,		[12,F],	],
-	if( uwp[7].between(12,F) ) {
-		tradeCodes.push('HT');
-	}
+    // HT : [    null,     null,       null,       null,       null,       null,       [12,F], ],
+    if( uwp[7].between(12,F) ) {
+        tradeCodes.push('HT');
+    }
 
-	// IE : [	null,		[0,1],		[1,F],		null,		null,		null,		null,	],
-	if( uwp[1].between(0,1) && uwp[2].between(1,F) ) {
-		tradeCodes.push('IE');
-	}
+    // IE : [    null,     [0,1],      [1,F],      null,       null,       null,       null,   ],
+    if( uwp[1].between(0,1) && uwp[2].between(1,F) ) {
+        tradeCodes.push('IE');
+    }
 
-	// IN : [	null,	[0,1,2,4,7,9],	null,		[9,F],		null,		null,		null,	],
-	if( ( uwp[2].between(0,2) || uwp[2].between(4) || uwp[2].between(7) || uwp[2].between(9) ) && uwp[4].between(9,F) ) {
-		tradeCodes.push('IN');
-	}
+    // IN : [    null,  [0,1,2,4,7,9], null,       [9,F],      null,       null,       null,   ],
+    if( ( uwp[2].between(0,2) || uwp[2].between(4) || uwp[2].between(7) || uwp[2].between(9) ) && uwp[4].between(9,F) ) {
+        tradeCodes.push('IN');
+    }
 
-	// LO : [	null,		null,		null,		[0,3],		null,		null,		null,	],
-	if( uwp[4].between(0,3) ) {
-		tradeCodes.push('LO');
-	}
+    // LO : [    null,     null,       null,       [0,3],      null,       null,       null,   ],
+    if( uwp[4].between(0,3) ) {
+        tradeCodes.push('LO');
+    }
 
-	// LT : [	null,		null,		null,		null,		null,		null,		[0,5],	],
-	if( uwp[7].between(0,5) ) {
-		tradeCodes.push('LT');
-	}
+    // LT : [    null,     null,       null,       null,       null,       null,       [0,5],  ],
+    if( uwp[7].between(0,5) ) {
+        tradeCodes.push('LT');
+    }
 
-	// NA : [	null,		[0,3],		[0,3],		[6,F],		null,		null,		null,	],
-	if( uwp[2].between(0,3) && uwp[3].between(0,3) && uwp[4].between(6,F) ) {
-		tradeCodes.push('NA');
-	}
+    // NA : [    null,     [0,3],      [0,3],      [6,F],      null,       null,       null,   ],
+    if( uwp[2].between(0,3) && uwp[3].between(0,3) && uwp[4].between(6,F) ) {
+        tradeCodes.push('NA');
+    }
 
-	// NI : [	null,		null,		null,		[0,6],		null,		null,		null,	],
-	if( uwp[4].between(0,6) ) {
-		tradeCodes.push('NI');
-	}
+    // NI : [    null,     null,       null,       [0,6],      null,       null,       null,   ],
+    if( uwp[4].between(0,6) ) {
+        tradeCodes.push('NI');
+    }
 
-	// PO : [	null,		[2,5],		[0,3],		null,		null,		null,		null,	],
-	if( uwp[2].between(2,5) && uwp[3].between(0,3) ) {
-		tradeCodes.push('PO');
-	}
+    // PO : [    null,     [2,5],      [0,3],      null,       null,       null,       null,   ],
+    if( uwp[2].between(2,5) && uwp[3].between(0,3) ) {
+        tradeCodes.push('PO');
+    }
 
-	// RI : [	null,		[[6],[8]],	null,		[6,8],		[4,9],		null,		null,	],
-	if( ( uwp[2].between(6) || uwp[2].between(8) ) && uwp[4].between(6,8)) {
-		tradeCodes.push('RI');
-	}
+    // RI : [    null,     [[6],[8]],  null,       [6,8],      [4,9],      null,       null,   ],
+    if( ( uwp[2].between(6) || uwp[2].between(8) ) && uwp[4].between(6,8)) {
+        tradeCodes.push('RI');
+    }
 
-	// VA : [	null,		0,			null,		null,		null,		null,		null,	],
-	if( uwp[2].between(0) ) {
-		tradeCodes.push('VA');
-	}
+    // VA : [    null,     0,          null,       null,       null,       null,       null,   ],
+    if( uwp[2].between(0) ) {
+        tradeCodes.push('VA');
+    }
 
-	// WA : [	null,		null,		[10,F],		null,		null,		null,		null,	],
-	if( uwp[3].between(10,F) ) {
-		tradeCodes.push('WA');
-	}
+    // WA : [    null,     null,       [10,F],     null,       null,       null,       null,   ],
+    if( uwp[3].between(10,F) ) {
+        tradeCodes.push('WA');
+    }
 
-	return tradeCodes;
+    return tradeCodes;
 }
 
 function generateTable(dms) {
 
-	var table = document.getElementById("tradeTable");
+    var table = document.getElementById("tradeTable");
 
-	while ( table.rows.length > 1 ) {
-		table.deleteRow(table.rows.length - 1);
-	}
+    while ( table.rows.length > 1 ) {
+        table.deleteRow(table.rows.length - 1);
+    }
 
-	tradeGoods.forEach(function(goods) {
-		var row = table.insertRow();
+    tradeGoods.forEach(function(goods) {
+        var row = table.insertRow();
 
-		Object.entries(goods).forEach(value => {
-			switch(value[0]) {
-				case 'dd':
-				case 'type':
-				case 'tons':
-				case 'price':
-					row.insertCell().innerHTML = value[1];
-					break;
-				case 'availability':
-					if(!dms[goods['dd']]['available']) {
-						row.classList.add('unavailable');
-					}
-					row.insertCell().innerHTML = dms[goods['dd']]['available'] ? 'YES' : '';
-					break;
-				case 'buyDm':
-					row.insertCell().innerHTML = dms[goods['dd']]['buyDm'];
-					break;
-				case 'sellDm':
-					row.insertCell().innerHTML = dms[goods['dd']]['sellDm'];
-					break;
-				case 'law':
-					if(dms[goods['dd']]['illegal']) {
-						row.classList.add('illegal');
-					}
-					row.insertCell().innerHTML = dms[goods['dd']]['illegal'] ? '*** ILLEGAL ***' : '';
-					break;
-				case 'government':
-				default:
-					break;
-			}
-		});
-	});
+        Object.entries(goods).forEach(value => {
+            switch(value[0]) {
+                case 'dd':
+                case 'type':
+                case 'tons':
+                case 'price':
+                    row.insertCell().innerHTML = value[1];
+                    break;
+                case 'availability':
+                    if(!dms[goods['dd']]['available']) {
+                        row.classList.add('unavailable');
+                    }
+                    row.insertCell().innerHTML = dms[goods['dd']]['available'] ? 'YES' : '';
+                    break;
+                case 'buyDm':
+                    row.insertCell().innerHTML = dms[goods['dd']]['buyDm'];
+                    break;
+                case 'sellDm':
+                    row.insertCell().innerHTML = dms[goods['dd']]['sellDm'];
+                    break;
+                case 'law':
+                    if(dms[goods['dd']]['illegal']) {
+                        row.classList.add('illegal');
+                    }
+                    row.insertCell().innerHTML = dms[goods['dd']]['illegal'] ? '*** ILLEGAL ***' : '';
+                    break;
+                case 'government':
+                default:
+                    break;
+            }
+        });
+    });
 }
 
 </script>
 <style>
 
 * {
-	font-family: Helvetica, Arial, sans-serif;
+    font-family: Helvetica, Arial, sans-serif;
 }
 
 body {
-	text-align: center;
-	color: white;
-	background-color: black;
-	padding: 0 1em 6em;
+    text-align: center;
+    color: white;
+    background-color: black;
+    padding: 0 1em 6em;
 }
 
 a {
-	color: red;
+    color: red;
 }
 
 table, th, td {
-	margin: 1em auto;
-	padding: .5em;
-	border: 1px solid white;
-	table-layout: inherit;
-	border-collapse: collapse;
-	font-size: small;
+    margin: 1em auto;
+    padding: .5em;
+    border: 1px solid white;
+    table-layout: inherit;
+    border-collapse: collapse;
+    font-size: small;
 }
 
 form {
-	text-align: center;
+    text-align: center;
 }
 
 form input {
-	font-size: large;
-	padding-left: .5em;
+    font-size: large;
+    padding-left: .5em;
 }
 
 .unavailable {
-	color: gray;
-	text-decoration: line-through;
+    color: gray;
+    text-decoration: line-through;
 }
 
 .illegal {
-	color: red;
-	text-decoration: none;
-	border: 1px solid red;
+    color: red;
+    text-decoration: none;
+    border: 1px solid red;
 }
 
 footer {
-	font-size: small;
-	margin: 0;
-	width: 100%;
-	/* position:fixed;
-	bottom: 0; */
-	padding-bottom: 1em;
-	background-color: black;
+    font-size: small;
+    margin: 0;
+    width: 100%;
+    /* position:fixed;
+    bottom: 0; */
+    padding-bottom: 1em;
+    background-color: black;
 }
 </style>
 </head>
@@ -321,37 +321,37 @@ footer {
 <p>Enter the eight-character Universal World Profile to generate its dice modifier for available trade goods.</p>
 
 <form action="get" onsubmit="generate(); return false;">
-	<label>UWP code:</label>
-		<input name="uwp" id="uwp" maxlength="8" size="9" placeholder="########" value="">
-	<label>Zone:</label>
-		<select name="zone" id="zone">
-		<option value="">Green</option>
-		<option value="AmberZone">Amber</option>
-		<option value="RedZone">Red</option>
-	</select>
-	<button name="submit">Generate DMs</button>
+    <label>UWP code:</label>
+        <input name="uwp" id="uwp" maxlength="8" size="9" placeholder="########" value="">
+    <label>Zone:</label>
+        <select name="zone" id="zone">
+        <option value="">Green</option>
+        <option value="AmberZone">Amber</option>
+        <option value="RedZone">Red</option>
+    </select>
+    <button name="submit">Generate DMs</button>
 </form>
 
 <p id="tradeCodes"></p>
 
 <table id="tradeTable">
-	<tr>
-		<th>D66</th>
-		<th>Type</th>
-		<th>Availability</th>
-		<th>Tons</th>
-		<th>Base Price</th>
-		<th>Purchase DM</th>
-		<th>Sale DM</th>
-		<th>Illegal</th>
-		<!-- <th>Government</th> -->
-	</tr>
+    <tr>
+        <th>D66</th>
+        <th>Type</th>
+        <th>Availability</th>
+        <th>Tons</th>
+        <th>Base Price</th>
+        <th>Purchase DM</th>
+        <th>Sale DM</th>
+        <th>Illegal</th>
+        <!-- <th>Government</th> -->
+    </tr>
 </table>
 
 <footer>
-	<p>For Mongoose Traveller, 2nd Edition</p>
-	<p xmlns:cc="http://creativecommons.org/ns#" xmlns:dct="http://purl.org/dc/terms/"><a property="dct:title" rel="cc:attributionURL" href="https://github.com/timtoon/trade-goods">Trade Goods Dice Modifiers</a> by <a rel="cc:attributionURL dct:creator" property="cc:attributionName" href="http://timtoon.com">Tim Heiderich</a> is licensed under <a href="http://creativecommons.org/licenses/by-nc/4.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer" style="display:inline-block;">CC BY-NC 4.0<img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1"><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg?ref=chooser-v1"><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg?ref=chooser-v1"></a></p>
-	<p><a href="http://www.farfuture.net/FFEFairUsePolicy2008.pdf" target="_blank">The Traveller game in all forms is owned by Far Future Enterprises. Copyright 1977-2008 Far Future Enterprises.</a></p>
+    <p>For Mongoose Traveller, 2nd Edition</p>
+    <p xmlns:cc="http://creativecommons.org/ns#" xmlns:dct="http://purl.org/dc/terms/"><a property="dct:title" rel="cc:attributionURL" href="https://github.com/timtoon/trade-goods">Trade Goods Dice Modifiers</a> by <a rel="cc:attributionURL dct:creator" property="cc:attributionName" href="http://timtoon.com">Tim Heiderich</a> is licensed under <a href="http://creativecommons.org/licenses/by-nc/4.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer" style="display:inline-block;">CC BY-NC 4.0<img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1"><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg?ref=chooser-v1"><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg?ref=chooser-v1"></a></p>
+    <p><a href="http://www.farfuture.net/FFEFairUsePolicy2008.pdf" target="_blank">The Traveller game in all forms is owned by Far Future Enterprises. Copyright 1977-2008 Far Future Enterprises.</a></p>
 </footer>
 </body>
 <script>
@@ -360,377 +360,376 @@ footer {
 // If law level is greater than the given number, then goods are contraband under the given government types
 
 // government    = illegal in these government types:
-//	- Weapons	 1,3,4,5,6,8,9,11,12
-//	- Drugs		 2,4,8,9
-//	- Technology 3,5,6,9,11
-//	- Computers	 5,11
-//	- Travellers 3,6,9
-//	- Psionics	 9
-
+//    - Weapons    1,3,4,5,6,8,9,11,12
+//    - Drugs      2,4,8,9
+//    - Technology 3,5,6,9,11
+//    - Computers  5,11
+//    - Travellers 3,6,9
+//    - Psionics   9
 
 const tradeGoods = [
 {
-	dd : 11,
-	type : 'Common Electronics',
-	availability : ['All'],
-	tons : '2D x 10',
-	price : 20000,
-	buyDm : {IN: 2, HT: 3, RI: 1},
-	sellDm : {NI: 2, LT: 1, PO: 1},
-	law: 9,
-	government: [3,5,6,9,11],
+    dd : 11,
+    type : 'Common Electronics',
+    availability : ['All'],
+    tons : '2D x 10',
+    price : 20000,
+    buyDm : {IN: 2, HT: 3, RI: 1},
+    sellDm : {NI: 2, LT: 1, PO: 1},
+    law: 9,
+    government: [3,5,6,9,11],
 },{
-	dd : 12,
-	type : 'Common Industrial Goods',
-	availability : ['All'],
-	tons : '2D x 10',
-	price : 10000,
-	buyDm : {NA: 2, IN: 5},
-	sellDm : {NI: 3, AG: 2},
-	law: 9,
-	government: [3,5,6,9,11],
+    dd : 12,
+    type : 'Common Industrial Goods',
+    availability : ['All'],
+    tons : '2D x 10',
+    price : 10000,
+    buyDm : {NA: 2, IN: 5},
+    sellDm : {NI: 3, AG: 2},
+    law: 9,
+    government: [3,5,6,9,11],
 },{
-	dd : 13,
-	type : 'Common Manufactured Goods',
-	availability : ['All'],
-	tons : '2D x 10',
-	price : 20000,
-	buyDm : {NA: 2, IN: 5},
-	sellDm : {NI: 3, HI: 2},
-	law: 0,
-	government: [],
+    dd : 13,
+    type : 'Common Manufactured Goods',
+    availability : ['All'],
+    tons : '2D x 10',
+    price : 20000,
+    buyDm : {NA: 2, IN: 5},
+    sellDm : {NI: 3, HI: 2},
+    law: 0,
+    government: [],
 },{
-	dd : 14,
-	type : 'Common Raw Materials',
-	availability : ['All'],
-	tons : '2D x 20',
-	price : 5000,
-	buyDm : {AG: 3, GA: 2},
-	sellDm : {IN: 2, PO: 2},
-	law: 0,
-	government: [],
+    dd : 14,
+    type : 'Common Raw Materials',
+    availability : ['All'],
+    tons : '2D x 20',
+    price : 5000,
+    buyDm : {AG: 3, GA: 2},
+    sellDm : {IN: 2, PO: 2},
+    law: 0,
+    government: [],
 },{
-	dd : 15,
-	type : 'Common Consumables',
-	availability : ['All'],
-	tons : '2D x 20',
-	price : 500,
-	buyDm : {AG: 3, WA: 2, GA: 1, AS: -4},
-	sellDm : {AS: 1, Fl: 1, IE: 1, HI: 1},
-	law: 0,
-	government: [],
+    dd : 15,
+    type : 'Common Consumables',
+    availability : ['All'],
+    tons : '2D x 20',
+    price : 500,
+    buyDm : {AG: 3, WA: 2, GA: 1, AS: -4},
+    sellDm : {AS: 1, Fl: 1, IE: 1, HI: 1},
+    law: 0,
+    government: [],
 },{
-	dd : 16,
-	type : 'Common Ore',
-	availability : ['All'],
-	tons : '2D x 20',
-	price : 1000,
-	buyDm : {AS: 4},
-	sellDm : {IN: 3, NI: 1},
-	law: 0,
-	government: [],
+    dd : 16,
+    type : 'Common Ore',
+    availability : ['All'],
+    tons : '2D x 20',
+    price : 1000,
+    buyDm : {AS: 4},
+    sellDm : {IN: 3, NI: 1},
+    law: 0,
+    government: [],
 },{
-	dd : 21,
-	type : 'Advanced Electronics',
-	availability : ['IN', 'HT'],
-	tons : '1D x 5',
-	price : 100000,
-	buyDm : {IN: 2, HT: 3},
-	sellDm : {NI: 1, RI: 2, AS: 3},
-	law: 6,
-	government: [5,11],
+    dd : 21,
+    type : 'Advanced Electronics',
+    availability : ['IN', 'HT'],
+    tons : '1D x 5',
+    price : 100000,
+    buyDm : {IN: 2, HT: 3},
+    sellDm : {NI: 1, RI: 2, AS: 3},
+    law: 6,
+    government: [5,11],
 },{
-	dd : 22,
-	type : 'Advanced Machine Parts',
-	availability : ['IN', 'HT'],
-	tons : '1D x 5',
-	price : 75000,
-	buyDm : {IN: 2, HT: 1},
-	sellDm : {AS: 2, NI: 1},
-	law: 8,
-	government: [3,5,6,9,11],
+    dd : 22,
+    type : 'Advanced Machine Parts',
+    availability : ['IN', 'HT'],
+    tons : '1D x 5',
+    price : 75000,
+    buyDm : {IN: 2, HT: 1},
+    sellDm : {AS: 2, NI: 1},
+    law: 8,
+    government: [3,5,6,9,11],
 },{
-	dd : 23,
-	type : 'Advanced Manufactured Goods',
-	availability : ['IN', 'HT'],
-	tons : '1D x 5',
-	price : 100000,
-	buyDm : {IN: 1},
-	sellDm : {HI: 1, RI: 2},
-	law: 8,
-	government: [3,5,6,9,11],
+    dd : 23,
+    type : 'Advanced Manufactured Goods',
+    availability : ['IN', 'HT'],
+    tons : '1D x 5',
+    price : 100000,
+    buyDm : {IN: 1},
+    sellDm : {HI: 1, RI: 2},
+    law: 8,
+    government: [3,5,6,9,11],
 },{
-	dd : 24,
-	type : 'Advanced Weapons',
-	availability : ['IN', 'HT'],
-	tons : '1D x 5',
-	price : 150000,
-	buyDm : {HT: 2},
-	sellDm : {PO: 1, AmberZone: 2, RedZone: 4},
-	law: 3,
-	government: [1,3,4,5,6,8,9,11,12],
+    dd : 24,
+    type : 'Advanced Weapons',
+    availability : ['IN', 'HT'],
+    tons : '1D x 5',
+    price : 150000,
+    buyDm : {HT: 2},
+    sellDm : {PO: 1, AmberZone: 2, RedZone: 4},
+    law: 3,
+    government: [1,3,4,5,6,8,9,11,12],
 },{
-	dd : 25,
-	type : 'Advanced Vehicles',
-	availability : ['IN', 'HT'],
-	tons : '1D x 5',
-	price : 180000,
-	buyDm : {HT: 2},
-	sellDm : {AS: 2, RI: 2},
-	law: 8,
-	government: [3,5,6,9,11],
+    dd : 25,
+    type : 'Advanced Vehicles',
+    availability : ['IN', 'HT'],
+    tons : '1D x 5',
+    price : 180000,
+    buyDm : {HT: 2},
+    sellDm : {AS: 2, RI: 2},
+    law: 8,
+    government: [3,5,6,9,11],
 },{
-	dd : 26,
-	type : 'Biochemicals',
-	availability : ['AG', 'WA'],
-	tons : '1D x 5',
-	price : 50000,
-	buyDm : {AG: 1, WA: 2},
-	sellDm : {IN: 2},
-	law: 0,
-	government: [],
+    dd : 26,
+    type : 'Biochemicals',
+    availability : ['AG', 'WA'],
+    tons : '1D x 5',
+    price : 50000,
+    buyDm : {AG: 1, WA: 2},
+    sellDm : {IN: 2},
+    law: 0,
+    government: [],
 },{
-	dd : 31,
-	type : 'Crystals & Gems',
-	availability : ['AS', 'DE', 'IE'],
-	tons : '1D x 5',
-	price : 20000,
-	buyDm : {AS: 2, DE: 1, IE: 1},
-	sellDm : {IN: 3, RI: 2},
-	law: 0,
-	government: [],
+    dd : 31,
+    type : 'Crystals & Gems',
+    availability : ['AS', 'DE', 'IE'],
+    tons : '1D x 5',
+    price : 20000,
+    buyDm : {AS: 2, DE: 1, IE: 1},
+    sellDm : {IN: 3, RI: 2},
+    law: 0,
+    government: [],
 },{
-	dd : 32,
-	type : 'Cybernetics',
-	availability : ['HT'],
-	tons : '1D',
-	price : 250000,
-	buyDm : {HT: 1},
-	sellDm : {AS: 1, IE: 1, RI: 2},
-	law: 0,
-	government: [3,5,6,9,11],
+    dd : 32,
+    type : 'Cybernetics',
+    availability : ['HT'],
+    tons : '1D',
+    price : 250000,
+    buyDm : {HT: 1},
+    sellDm : {AS: 1, IE: 1, RI: 2},
+    law: 0,
+    government: [3,5,6,9,11],
 },{
-	dd : 33,
-	type : 'Live Animals',
-	availability : ['AG', 'GA'],
-	tons : '1D x 10',
-	price : 10000,
-	buyDm : {AG: 2},
-	sellDm : {LO: 3},
-	law: 0,
-	government: [],
+    dd : 33,
+    type : 'Live Animals',
+    availability : ['AG', 'GA'],
+    tons : '1D x 10',
+    price : 10000,
+    buyDm : {AG: 2},
+    sellDm : {LO: 3},
+    law: 0,
+    government: [],
 },{
-	dd : 34,
-	type : 'Luxury Consumables',
-	availability : ['AG', 'GA', 'WA'],
-	tons : '1D x 10',
-	price : 20000,
-	buyDm : {AG: 2, WA: 1},
-	sellDm : {RI: 2, HI: 2},
-	law: 0,
-	government: [],
+    dd : 34,
+    type : 'Luxury Consumables',
+    availability : ['AG', 'GA', 'WA'],
+    tons : '1D x 10',
+    price : 20000,
+    buyDm : {AG: 2, WA: 1},
+    sellDm : {RI: 2, HI: 2},
+    law: 0,
+    government: [],
 },{
-	dd : 35,
-	type : 'Luxury Goods',
-	availability : ['HI'],
-	tons : '1D',
-	price : 200000,
-	buyDm : {HI: 1},
-	sellDm : {RI: 4},
-	law: 0,
-	government: [],
+    dd : 35,
+    type : 'Luxury Goods',
+    availability : ['HI'],
+    tons : '1D',
+    price : 200000,
+    buyDm : {HI: 1},
+    sellDm : {RI: 4},
+    law: 0,
+    government: [],
 },{
-	dd : 36,
-	type : 'Medical Supplies',
-	availability : ['HT', 'HI'],
-	tons : '1D x 5',
-	price : 50000,
-	buyDm : {HT: 2},
-	sellDm : {IN: 2, PO: 1, RI: 1},
-	law: 9,
-	government: [2,4,8,9],
+    dd : 36,
+    type : 'Medical Supplies',
+    availability : ['HT', 'HI'],
+    tons : '1D x 5',
+    price : 50000,
+    buyDm : {HT: 2},
+    sellDm : {IN: 2, PO: 1, RI: 1},
+    law: 9,
+    government: [2,4,8,9],
 },{
-	dd : 41,
-	type : 'Petrochemicals',
-	availability : ['DE', 'Fl', 'IE', 'WA'],
-	tons : '1D x 10',
-	price : 10000,
-	buyDm : {DE: 2},
-	sellDm : {IN: 2, AG: 1, LT: 2},
-	law: 0,
-	government: [],
+    dd : 41,
+    type : 'Petrochemicals',
+    availability : ['DE', 'Fl', 'IE', 'WA'],
+    tons : '1D x 10',
+    price : 10000,
+    buyDm : {DE: 2},
+    sellDm : {IN: 2, AG: 1, LT: 2},
+    law: 0,
+    government: [],
 },{
-	dd : 42,
-	type : 'Pharmaceuticals',
-	availability : ['AS', 'DE', 'HI', 'WA'],
-	tons : '1D',
-	price : 100000,
-	buyDm : {AS: 2, HI: 1},
-	sellDm : {RI: 2, LT: 1},
-	law: 0,
-	government: [],
+    dd : 42,
+    type : 'Pharmaceuticals',
+    availability : ['AS', 'DE', 'HI', 'WA'],
+    tons : '1D',
+    price : 100000,
+    buyDm : {AS: 2, HI: 1},
+    sellDm : {RI: 2, LT: 1},
+    law: 0,
+    government: [],
 },{
-	dd : 43,
-	type : 'Polymers',
-	availability : ['IN'],
-	tons : '1D x 10',
-	price : 7000,
-	buyDm : {IN: 1},
-	sellDm : {RI: 2, NI: 1},
-	law: 0,
-	government: [],
+    dd : 43,
+    type : 'Polymers',
+    availability : ['IN'],
+    tons : '1D x 10',
+    price : 7000,
+    buyDm : {IN: 1},
+    sellDm : {RI: 2, NI: 1},
+    law: 0,
+    government: [],
 },{
-	dd : 44,
-	type : 'Precious Metals',
-	availability : ['AS', 'DE', 'IE', 'FL'],
-	tons : '1D',
-	price : 50000,
-	buyDm : {AS: 3, DE: 1, IE: 2},
-	sellDm : {RI: 3, IN: 2, HT: 1},
-	law: 0,
-	government: [],
+    dd : 44,
+    type : 'Precious Metals',
+    availability : ['AS', 'DE', 'IE', 'FL'],
+    tons : '1D',
+    price : 50000,
+    buyDm : {AS: 3, DE: 1, IE: 2},
+    sellDm : {RI: 3, IN: 2, HT: 1},
+    law: 0,
+    government: [],
 },{
-	dd : 45,
-	type : 'Radioactives',
-	availability : ['AS', 'DE', 'LO'],
-	tons : '1D',
-	price : 1000000000,
-	buyDm : {AS: 2, LO: 2},
-	sellDm : {IN: 3, HT: 1, NI: -2, AG: -3},
-	law: 0,
-	government: [],
+    dd : 45,
+    type : 'Radioactives',
+    availability : ['AS', 'DE', 'LO'],
+    tons : '1D',
+    price : 1000000000,
+    buyDm : {AS: 2, LO: 2},
+    sellDm : {IN: 3, HT: 1, NI: -2, AG: -3},
+    law: 0,
+    government: [],
 },{
-	dd : 46,
-	type : 'Robots',
-	availability : ['IN'],
-	tons : '1D x 5',
-	price : 400000,
-	buyDm : {IN: 1},
-	sellDm : {AG: 2, HT: 1},
-	law: 8,
-	government: [3,5,6,9,11],
+    dd : 46,
+    type : 'Robots',
+    availability : ['IN'],
+    tons : '1D x 5',
+    price : 400000,
+    buyDm : {IN: 1},
+    sellDm : {AG: 2, HT: 1},
+    law: 8,
+    government: [3,5,6,9,11],
 },{
-	dd : 51,
-	type : 'Spices',
-	availability : ['GA', 'DE', 'WA'],
-	tons : '1D x 10',
-	price : 6000,
-	buyDm : {DE: 2},
-	sellDm : {HI: 2, RI: 3, PO: 3},
-	law: 0,
-	government: [],
+    dd : 51,
+    type : 'Spices',
+    availability : ['GA', 'DE', 'WA'],
+    tons : '1D x 10',
+    price : 6000,
+    buyDm : {DE: 2},
+    sellDm : {HI: 2, RI: 3, PO: 3},
+    law: 0,
+    government: [],
 },{
-	dd : 52,
-	type : 'Textiles',
-	availability : ['AG', 'NI'],
-	tons : '1D x 20',
-	price : 3000,
-	buyDm : {AG: 7},
-	sellDm : {HI: 3, NA: 2},
-	law: 0,
-	government: [],
+    dd : 52,
+    type : 'Textiles',
+    availability : ['AG', 'NI'],
+    tons : '1D x 20',
+    price : 3000,
+    buyDm : {AG: 7},
+    sellDm : {HI: 3, NA: 2},
+    law: 0,
+    government: [],
 },{
-	dd : 53,
-	type : 'Uncommon Ore',
-	availability : ['AS', 'IE'],
-	tons : '1D x 20',
-	price : 5000,
-	buyDm : {AS: 4},
-	sellDm : {IN: 3, NI: 1},
-	law: 0,
-	government: [],
+    dd : 53,
+    type : 'Uncommon Ore',
+    availability : ['AS', 'IE'],
+    tons : '1D x 20',
+    price : 5000,
+    buyDm : {AS: 4},
+    sellDm : {IN: 3, NI: 1},
+    law: 0,
+    government: [],
 },{
-	dd : 54,
-	type : 'Uncommon Raw Materials',
-	availability : ['AG', 'DE', 'WA'],
-	tons : '1D x 10',
-	price : 20000,
-	buyDm : {AG: 2, WA: 1},
-	sellDm : {IN: 2, HT: 1},
-	law: 0,
-	government: [],
+    dd : 54,
+    type : 'Uncommon Raw Materials',
+    availability : ['AG', 'DE', 'WA'],
+    tons : '1D x 10',
+    price : 20000,
+    buyDm : {AG: 2, WA: 1},
+    sellDm : {IN: 2, HT: 1},
+    law: 0,
+    government: [],
 },{
-	dd : 55,
-	type : 'Wood',
-	availability : ['AG', 'GA'],
-	tons : '1D x 20',
-	price : 1000,
-	buyDm : {AG: 6},
-	sellDm : {RI: 2, IN: 1},
-	law: 0,
-	government: [],
+    dd : 55,
+    type : 'Wood',
+    availability : ['AG', 'GA'],
+    tons : '1D x 20',
+    price : 1000,
+    buyDm : {AG: 6},
+    sellDm : {RI: 2, IN: 1},
+    law: 0,
+    government: [],
 },{
-	dd : 56,
-	type : 'Vehicles',
-	availability : ['IN', 'HT'],
-	tons : '1D x 10',
-	price : 15000,
-	buyDm : {IN: 2, HT: 1},
-	sellDm : {NI: 2, HI: 1},
-	law: 0,
-	government: [],
+    dd : 56,
+    type : 'Vehicles',
+    availability : ['IN', 'HT'],
+    tons : '1D x 10',
+    price : 15000,
+    buyDm : {IN: 2, HT: 1},
+    sellDm : {NI: 2, HI: 1},
+    law: 0,
+    government: [],
 },{
-	dd : 61,
-	type : 'Illegal Biochemicals',
-	availability : ['AG', 'WA'],
-	tons : '1D x 5',
-	price : 50000,
-	buyDm : {WA: 2},
-	sellDm : {IN: 6},
-	law: 3,
-	government: [],
+    dd : 61,
+    type : 'Illegal Biochemicals',
+    availability : ['AG', 'WA'],
+    tons : '1D x 5',
+    price : 50000,
+    buyDm : {WA: 2},
+    sellDm : {IN: 6},
+    law: 3,
+    government: [],
 },{
-	dd : 62,
-	type : 'Cybernetics, Illegal',
-	availability : ['HT'],
-	tons : '1D',
-	price : 250000,
-	buyDm : {HT: 1},
-	sellDm : {AS: 4, IE: 4, RI: 8, AmberZone: 6, RedZone: 6},
-	law: 3,
-	government: [],
+    dd : 62,
+    type : 'Cybernetics, Illegal',
+    availability : ['HT'],
+    tons : '1D',
+    price : 250000,
+    buyDm : {HT: 1},
+    sellDm : {AS: 4, IE: 4, RI: 8, AmberZone: 6, RedZone: 6},
+    law: 3,
+    government: [],
 },{
-	dd : 63,
-	type : 'Drugs, Illegal',
-	availability : ['AS', 'DE', 'HI', 'WA'],
-	tons : '1D',
-	price : 100000,
-	buyDm : {AS: 1, DE: 1, GA: 1, WA: 1},
-	sellDm : {RI: 6, HI: 6},
-	law: 6,
-	government: [1,2,3,4,5,6,8,9,11],
+    dd : 63,
+    type : 'Drugs, Illegal',
+    availability : ['AS', 'DE', 'HI', 'WA'],
+    tons : '1D',
+    price : 100000,
+    buyDm : {AS: 1, DE: 1, GA: 1, WA: 1},
+    sellDm : {RI: 6, HI: 6},
+    law: 6,
+    government: [1,2,3,4,5,6,8,9,11],
 },{
-	dd : 64,
-	type : 'Luxuries, Illegal',
-	availability : ['AG', 'GA', 'WA'],
-	tons : '1D',
-	price : 50000,
-	buyDm : {AG: 2, WA: 1},
-	sellDm : {RI: 6, HI: 4},
-	law: 6,
-	government: [],
+    dd : 64,
+    type : 'Luxuries, Illegal',
+    availability : ['AG', 'GA', 'WA'],
+    tons : '1D',
+    price : 50000,
+    buyDm : {AG: 2, WA: 1},
+    sellDm : {RI: 6, HI: 4},
+    law: 6,
+    government: [],
 },{
-	
-	dd : 65,
-	type : 'Weapons, Illegal',
-	availability : ['IN', 'HT'],
-	tons : '1D x 5',
-	price : 150000,
-	buyDm : {HT: 2},
-	sellDm : {PO: 6, AmberZone: 8, RedZone: 10},
-	law: 1,
-	government: [],
+    
+    dd : 65,
+    type : 'Weapons, Illegal',
+    availability : ['IN', 'HT'],
+    tons : '1D x 5',
+    price : 150000,
+    buyDm : {HT: 2},
+    sellDm : {PO: 6, AmberZone: 8, RedZone: 10},
+    law: 1,
+    government: [],
 },{
-	
-	dd : 66,
-	type : 'Exotics',
-	availability : ['?'],
-	tons : '?',
-	price : 0,
-	buyDm : {},
-	sellDm : {},
-	law: 0,
-	government: [],
+    
+    dd : 66,
+    type : 'Exotics',
+    availability : ['?'],
+    tons : '?',
+    price : 0,
+    buyDm : {},
+    sellDm : {},
+    law: 0,
+    government: [],
 }
 ];
 

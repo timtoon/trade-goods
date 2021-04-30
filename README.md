@@ -10,7 +10,7 @@ Post any bugs or feature requests here, or [contact me](http://www.timtoon.com/c
 
 On worlds where goods are contraband, the Purchase/Sale DM is the greater of the law level or the existing DM. Contraband availability supercedes Trade Goods availability, as smuggled goods are still available on the black market. Unavailable, legal Trade Goods are simply unavailable.
 
-As Poley noted, the categories of contraband (weapons, drugs, technology, etc.) don't mesh perfectly with the categories of trade goods, so I have listed those government types that ban certain goods under the `government` attribute within `tradeGoods`. The notable exception is illegal drugs under Govetment (A).
+As Poley noted, the categories of contraband (weapons, drugs, technology, etc.) don't mesh perfectly with the categories of trade goods, so I have listed those government types that ban certain goods under the `government` attribute within `tradeGoods`. The notable exception is illegal drugs under Government (A).
 
 ---
 

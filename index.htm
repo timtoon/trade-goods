@@ -323,6 +323,7 @@ footer {
 </head>
 <body>
 <h1>Trade Goods Dice Modifiers</h1>
+<h3>For Mongoose Traveller, 2nd Edition</h3>
 <p>Enter the eight-character Universal World Profile to generate its dice modifier for available trade goods.</p>
 
 <form action="get" onsubmit="generate(); return false;">
@@ -354,7 +355,6 @@ footer {
 <p>These plus 1D trade goods are available, rolled randomly from the D66 column.</p>
 
 <footer>
-    <p>For Mongoose Traveller, 2nd Edition</p>
     <p xmlns:cc="http://creativecommons.org/ns#" xmlns:dct="http://purl.org/dc/terms/"><a property="dct:title" rel="cc:attributionURL" href="https://github.com/timtoon/trade-goods">Trade Goods Dice Modifiers</a> by <a rel="cc:attributionURL dct:creator" property="cc:attributionName" href="http://timtoon.com">Tim Heiderich</a> is licensed under <a href="http://creativecommons.org/licenses/by-nc/4.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer" style="display:inline-block;">CC BY-NC 4.0<img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1"><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg?ref=chooser-v1"><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg?ref=chooser-v1"></a></p>
     <p><a href="http://www.farfuture.net/FFEFairUsePolicy2008.pdf" target="_blank">The Traveller game in all forms is owned by Far Future Enterprises. Copyright 1977-2008 Far Future Enterprises.</a></p>
 </footer>
@@ -432,7 +432,7 @@ const tradeGoods = [
     price : 100000,
     buyDm : {IN: 2, HT: 3},
     sellDm : {NI: 1, RI: 2, AS: 3},
-    government: [5,11],
+    government: [3,5,6,9,11],
 },{
     dd : 22,
     type : 'Advanced Machine Parts',
